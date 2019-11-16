@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#include <gtk/gtk.h>
 
 @interface AppDelegate ()
 
@@ -18,6 +19,22 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    
+    char **argv = g_malloc(sizeof (void *) * 2);
+    argv[0] = g_strdup ("test-gtk");
+    argv[1] = NULL;
+    
+    int argc = 1;
+    gtk_init (&argc, &argv);
+    
+    CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(NULL, kCFRunLoopBeforeTimers, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+        gtk_main_iteration_do(TRUE);
+    });
+    
+    NSRunLoop *mainloop = NSRunLoop.mainRunLoop;
+    CFRunLoopRef cfLoop = [mainloop getCFRunLoop];
+    
+    CFRunLoopAddObserver(cfLoop, observer, kCFRunLoopCommonModes);
 }
 
 
